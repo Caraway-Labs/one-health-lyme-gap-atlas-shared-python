@@ -1,4 +1,6 @@
 from lyme_gap_atlas_shared.observability import redact
+from lyme_gap_atlas_shared.settings import SnowflakeSettings
+from lyme_gap_atlas_shared.snowflake import connection_parameters
 
 
 def test_redact_masks_nested_secrets() -> None:
@@ -8,3 +10,13 @@ def test_redact_masks_nested_secrets() -> None:
         "nested": {"password": "[REDACTED_SECRET]"},
     }
 
+
+def test_bootstrap_connection_omits_database() -> None:
+    settings = SnowflakeSettings(
+        snowflake_account="account",
+        snowflake_user="operator",
+        snowflake_role="SYSADMIN",
+        snowflake_pat="placeholder",
+    )
+    assert "database" not in connection_parameters(settings, include_database=False)
+    assert connection_parameters(settings)["database"] == "ONE_HEALTH_LYME_GAP_ATLAS"

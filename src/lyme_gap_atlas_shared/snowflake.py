@@ -10,17 +10,20 @@ from snowflake.connector import SnowflakeConnection
 from .settings import SnowflakeSettings
 
 
-def connection_parameters(settings: SnowflakeSettings) -> dict[str, Any]:
+def connection_parameters(
+    settings: SnowflakeSettings, *, include_database: bool = True
+) -> dict[str, Any]:
     parameters: dict[str, Any] = {
         "account": settings.snowflake_account,
         "user": settings.snowflake_user,
         "warehouse": settings.snowflake_warehouse,
         "role": settings.snowflake_role,
-        "database": settings.snowflake_database,
         "login_timeout": 15,
         "network_timeout": 30,
         "session_parameters": {"QUERY_TAG": "one-health-lyme-gap-atlas"},
     }
+    if include_database:
+        parameters["database"] = settings.snowflake_database
     if settings.snowflake_auth_method == "pat":
         if settings.snowflake_pat is None:
             raise ValueError("SNOWFLAKE_PAT is required for PAT authentication")
@@ -46,6 +49,10 @@ def connection_parameters(settings: SnowflakeSettings) -> dict[str, Any]:
     return parameters
 
 
-def connect(settings: SnowflakeSettings) -> SnowflakeConnection:
-    return snowflake.connector.connect(**connection_parameters(settings))
-
+def connect(
+    settings: SnowflakeSettings, *, include_database: bool = True
+) -> SnowflakeConnection:
+    """Connect to Snowflake, optionally before the target database exists."""
+    return snowflake.connector.connect(
+        **connection_parameters(settings, include_database=include_database)
+    )
