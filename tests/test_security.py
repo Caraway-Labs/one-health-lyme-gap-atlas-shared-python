@@ -20,3 +20,17 @@ def test_bootstrap_connection_omits_database() -> None:
     )
     assert "database" not in connection_parameters(settings, include_database=False)
     assert connection_parameters(settings)["database"] == "ONE_HEALTH_LYME_GAP_ATLAS"
+
+
+def test_pat_uses_connector_password_parameter() -> None:
+    settings = SnowflakeSettings(
+        snowflake_account="account",
+        snowflake_user="operator",
+        snowflake_pat="placeholder",
+    )
+
+    parameters = connection_parameters(settings)
+
+    assert parameters["password"] == "placeholder"
+    assert "authenticator" not in parameters
+    assert "token" not in parameters

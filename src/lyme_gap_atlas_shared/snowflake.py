@@ -27,10 +27,11 @@ def connection_parameters(
     if settings.snowflake_auth_method == "pat":
         if settings.snowflake_pat is None:
             raise ValueError("SNOWFLAKE_PAT is required for PAT authentication")
-        parameters.update(
-            authenticator="PROGRAMMATIC_ACCESS_TOKEN",
-            password=settings.snowflake_pat.get_secret_value(),
-        )
+        # Snowflake's Python connector accepts a PAT in the password field and
+        # detects it during standard authentication. Setting the endpoint PAT
+        # authenticator instead would make the connector read ``token`` and use
+        # the REST endpoint flow rather than the documented connector flow.
+        parameters["password"] = settings.snowflake_pat.get_secret_value()
         return parameters
 
     if settings.snowflake_private_key_b64 is None:
