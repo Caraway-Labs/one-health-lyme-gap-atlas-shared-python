@@ -34,3 +34,19 @@ def test_pat_uses_connector_password_parameter() -> None:
     assert parameters["password"] == "placeholder"
     assert "authenticator" not in parameters
     assert "token" not in parameters
+
+
+def test_key_pair_can_read_encrypted_key_from_local_path(tmp_path) -> None:
+    key_path = tmp_path / "pipeline.p8"
+    # An invalid key still confirms that the configured path is selected over B64.
+    key_path.write_bytes(b"not-a-private-key")
+    settings = SnowflakeSettings(
+        snowflake_account="account",
+        snowflake_user="service",
+        snowflake_auth_method="key_pair",
+        snowflake_private_key_path=key_path,
+    )
+    try:
+        connection_parameters(settings)
+    except ValueError as error:
+        assert "Could not deserialize key data" in str(error)

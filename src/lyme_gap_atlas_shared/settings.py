@@ -1,5 +1,6 @@
 """Typed settings that never leak secret values in representations."""
 
+from pathlib import Path
 from typing import Literal
 
 from pydantic import SecretStr
@@ -19,4 +20,5 @@ class SnowflakeSettings(BaseSettings):
     snowflake_auth_method: Literal["pat", "key_pair"] = "pat"
     snowflake_pat: SecretStr | None = None
     snowflake_private_key_b64: SecretStr | None = None
+    snowflake_private_key_path: Path | None = None
     snowflake_private_key_passphrase: SecretStr | None = None

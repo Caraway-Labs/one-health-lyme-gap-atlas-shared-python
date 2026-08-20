@@ -34,17 +34,21 @@ def connection_parameters(
         parameters["password"] = settings.snowflake_pat.get_secret_value()
         return parameters
 
-    if settings.snowflake_private_key_b64 is None:
-        raise ValueError("SNOWFLAKE_PRIVATE_KEY_B64 is required for key-pair authentication")
+    if settings.snowflake_private_key_b64 is None and settings.snowflake_private_key_path is None:
+        raise ValueError(
+            "SNOWFLAKE_PRIVATE_KEY_B64 or SNOWFLAKE_PRIVATE_KEY_PATH is required for key-pair authentication"
+        )
     password = (
         settings.snowflake_private_key_passphrase.get_secret_value().encode()
         if settings.snowflake_private_key_passphrase
         else None
     )
-    key = serialization.load_pem_private_key(
-        base64.b64decode(settings.snowflake_private_key_b64.get_secret_value()),
-        password=password,
+    private_key_bytes = (
+        base64.b64decode(settings.snowflake_private_key_b64.get_secret_value())
+        if settings.snowflake_private_key_b64 is not None
+        else settings.snowflake_private_key_path.read_bytes()
     )
+    key = serialization.load_pem_private_key(private_key_bytes, password=password)
     parameters["private_key"] = key
     parameters["authenticator"] = "SNOWFLAKE_JWT"
     return parameters
