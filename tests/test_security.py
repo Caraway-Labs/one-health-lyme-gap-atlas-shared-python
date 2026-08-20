@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 from lyme_gap_atlas_shared.observability import redact
 from lyme_gap_atlas_shared.settings import SnowflakeSettings
 from lyme_gap_atlas_shared.snowflake import connection_parameters
@@ -46,7 +48,5 @@ def test_key_pair_can_read_encrypted_key_from_local_path(tmp_path) -> None:
         snowflake_auth_method="key_pair",
         snowflake_private_key_path=key_path,
     )
-    try:
+    with suppress(ValueError):
         connection_parameters(settings)
-    except ValueError:
-        pass
