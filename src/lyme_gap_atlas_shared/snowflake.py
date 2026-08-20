@@ -36,27 +36,26 @@ def connection_parameters(
 
     if settings.snowflake_private_key_b64 is None and settings.snowflake_private_key_path is None:
         raise ValueError(
-            "SNOWFLAKE_PRIVATE_KEY_B64 or SNOWFLAKE_PRIVATE_KEY_PATH is required for key-pair authentication"
+            "SNOWFLAKE_PRIVATE_KEY_B64 or SNOWFLAKE_PRIVATE_KEY_PATH is required "
+            "for key-pair authentication"
         )
     password = (
         settings.snowflake_private_key_passphrase.get_secret_value().encode()
         if settings.snowflake_private_key_passphrase
         else None
     )
-    private_key_bytes = (
-        base64.b64decode(settings.snowflake_private_key_b64.get_secret_value())
-        if settings.snowflake_private_key_b64 is not None
-        else settings.snowflake_private_key_path.read_bytes()
-    )
+    if settings.snowflake_private_key_b64 is not None:
+        private_key_bytes = base64.b64decode(settings.snowflake_private_key_b64.get_secret_value())
+    else:
+        assert settings.snowflake_private_key_path is not None
+        private_key_bytes = settings.snowflake_private_key_path.read_bytes()
     key = serialization.load_pem_private_key(private_key_bytes, password=password)
     parameters["private_key"] = key
     parameters["authenticator"] = "SNOWFLAKE_JWT"
     return parameters
 
 
-def connect(
-    settings: SnowflakeSettings, *, include_database: bool = True
-) -> SnowflakeConnection:
+def connect(settings: SnowflakeSettings, *, include_database: bool = True) -> SnowflakeConnection:
     """Connect to Snowflake, optionally before the target database exists."""
     return snowflake.connector.connect(
         **connection_parameters(settings, include_database=include_database)
