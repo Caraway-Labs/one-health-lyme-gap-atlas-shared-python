@@ -38,6 +38,23 @@ def test_pat_uses_connector_password_parameter() -> None:
     assert "token" not in parameters
 
 
+def test_network_timeout_is_bounded_and_configurable() -> None:
+    default_settings = SnowflakeSettings(
+        snowflake_account="account",
+        snowflake_user="operator",
+        snowflake_pat="placeholder",
+    )
+    configured_settings = SnowflakeSettings(
+        snowflake_account="account",
+        snowflake_user="operator",
+        snowflake_pat="placeholder",
+        snowflake_network_timeout_seconds=900,
+    )
+
+    assert connection_parameters(default_settings)["network_timeout"] == 600
+    assert connection_parameters(configured_settings)["network_timeout"] == 900
+
+
 def test_key_pair_can_read_encrypted_key_from_local_path(tmp_path) -> None:
     key_path = tmp_path / "pipeline.p8"
     # An invalid key still confirms that the configured path is selected over B64.

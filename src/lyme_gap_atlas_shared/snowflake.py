@@ -19,7 +19,7 @@ def connection_parameters(
         "warehouse": settings.snowflake_warehouse,
         "role": settings.snowflake_role,
         "login_timeout": 15,
-        "network_timeout": 30,
+        "network_timeout": settings.snowflake_network_timeout_seconds,
         "session_parameters": {"QUERY_TAG": "one-health-lyme-gap-atlas"},
     }
     if include_database:
