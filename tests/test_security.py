@@ -1,6 +1,8 @@
 from contextlib import suppress
 
-from lyme_gap_atlas_shared.observability import redact
+import pytest
+
+from lyme_gap_atlas_shared.observability import parse_otlp_headers, redact
 from lyme_gap_atlas_shared.settings import SnowflakeSettings
 from lyme_gap_atlas_shared.snowflake import connection_parameters
 
@@ -11,6 +13,19 @@ def test_redact_masks_nested_secrets() -> None:
         "token": "[REDACTED_SECRET]",
         "nested": {"password": "[REDACTED_SECRET]"},
     }
+
+
+def test_parse_otlp_headers_supports_authenticated_exporters() -> None:
+    assert parse_otlp_headers("Authorization=Bearer abc, X-Tenant=atlas") == {
+        "Authorization": "Bearer abc",
+        "X-Tenant": "atlas",
+    }
+
+
+@pytest.mark.parametrize("value", ["Authorization", "=Bearer abc", "Authorization="])
+def test_parse_otlp_headers_rejects_malformed_values(value: str) -> None:
+    with pytest.raises(ValueError, match="key=value"):
+        parse_otlp_headers(value)
 
 
 def test_bootstrap_connection_omits_database() -> None:

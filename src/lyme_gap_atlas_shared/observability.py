@@ -51,11 +51,26 @@ def configure_logging(level: str = "INFO") -> None:
     root.setLevel(level.upper())
 
 
+def parse_otlp_headers(value: str | None) -> dict[str, str]:
+    """Parse the standard OTLP comma-separated ``key=value`` header setting."""
+    if not value:
+        return {}
+    headers: dict[str, str] = {}
+    for pair in value.split(","):
+        key, separator, header_value = pair.strip().partition("=")
+        if not separator or not key or not header_value:
+            raise ValueError("OTEL_EXPORTER_OTLP_HEADERS must use comma-separated key=value pairs")
+        headers[key.strip()] = header_value.strip()
+    return headers
+
+
 def configure_tracing(service_name: str) -> None:
     endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
     if not endpoint:
         return
+    headers = parse_otlp_headers(os.getenv("OTEL_EXPORTER_OTLP_HEADERS"))
     provider = TracerProvider(resource=Resource.create({"service.name": service_name}))
-    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint)))
+    provider.add_span_processor(
+        BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint, headers=headers))
+    )
     trace.set_tracer_provider(provider)
-
