@@ -83,7 +83,9 @@ def test_configure_tracing_failure_is_private_and_non_fatal(
     assert "do-not-log" not in caplog.text
 
 
-def test_shutdown_attempts_both_operations_when_flush_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_shutdown_attempts_both_operations_when_flush_fails(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     provider = FakeProvider()
 
     def failed_flush() -> None:

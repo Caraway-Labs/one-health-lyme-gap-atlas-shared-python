@@ -3,8 +3,8 @@
 import json
 import logging
 import os
-from contextlib import suppress
 from collections.abc import Mapping
+from contextlib import suppress
 from datetime import UTC, datetime
 from threading import Lock
 from typing import Any
