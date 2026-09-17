@@ -15,9 +15,15 @@ def score_county(county: CountyInputs, settings: ScoreSettings) -> Score:
     else:
         human = float(settings.missing_human_weakness)
 
-    tick_signal = {"Established": 100.0, "Reported": 55.0, "No records": 0.0}[
-        county.tick_status
-    ]
+    # `Unknown` is not a publisher "No records" assertion. It carries no
+    # positive ecological signal while its distinct state remains visible to
+    # consumers and evidence-completeness calculations.
+    tick_signal = {
+        "Established": 100.0,
+        "Reported": 55.0,
+        "No records": 0.0,
+        "Unknown": 0.0,
+    }[county.tick_status]
     pathogen_signal = 100.0 if county.burgdorferi_status == "Present" else 0.0
     ecological = 0.6 * tick_signal + 0.4 * pathogen_signal
 
@@ -65,4 +71,3 @@ def score_color(score: float, in_scope: bool = True) -> str:
     if score >= 20:
         return "#55a8a3"
     return "#a9d2db"
-

@@ -32,3 +32,21 @@ def test_published_incidence_uses_breakpoint() -> None:
     )
     assert score_county(county, ScoreSettings()).human_weakness == 0
 
+
+def test_unknown_surveillance_state_remains_valid_for_scoring() -> None:
+    county = CountyInputs(
+        fips="08001",
+        in_contiguous_tick_scope=True,
+        human_status="no_county_linked_record",
+        incidence_floor_2023=None,
+        tick_status="Unknown",
+        burgdorferi_status="Unknown",
+        svi_percentile=0.5,
+        uninsured_percentile=0.5,
+        rucc_2023=4,
+    )
+
+    score = score_county(county, ScoreSettings())
+
+    assert score.tick_signal == 0
+    assert score.pathogen_signal == 0

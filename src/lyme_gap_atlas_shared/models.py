@@ -28,8 +28,8 @@ class CountyInputs(BaseModel):
     in_contiguous_tick_scope: bool
     human_status: Literal["published_count_floor", "no_county_linked_record"]
     incidence_floor_2023: float | None
-    tick_status: Literal["Established", "Reported", "No records"]
-    burgdorferi_status: Literal["Present", "No records"]
+    tick_status: Literal["Established", "Reported", "No records", "Unknown"]
+    burgdorferi_status: Literal["Present", "No records", "Unknown"]
     svi_percentile: float | None = Field(default=None, ge=0, le=1)
     uninsured_percentile: float | None = Field(default=None, ge=0, le=1)
     rucc_2023: int | None = Field(default=None, ge=1, le=9)
@@ -59,4 +59,3 @@ class Provenance(BaseModel):
     geography: str
     methodology_version: str
     limitations: str
-
