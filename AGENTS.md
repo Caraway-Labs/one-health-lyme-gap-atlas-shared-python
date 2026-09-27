@@ -10,8 +10,10 @@ before material work. For API or Snowflake boundary changes, also read
   the [proposed domain boundary](docs/adr/0001-portable-domain-boundary.md)
   when classifying new work: portable shared code may know Atlas semantics,
   but not where the data lives. Snowflake helpers are infrastructure-specific
-  migration candidates. Do not add FastAPI routes, MCP transport, browser
-  concerns, pipeline orchestration, or duplicate consumer-owned API models.
+  migration candidates. `lyme_gap_atlas_shared.domain` is the explicit
+  portable import surface; keep runtime imports out of it. Do not add FastAPI
+  routes, MCP transport, browser concerns, pipeline orchestration, or
+  duplicate consumer-owned API models.
 - Treat exported models and behavior as versioned dependencies of the API and
   data repositories. Preserve backward compatibility by default; coordinate a
   release/version update and downstream compatibility tests before a breaking
