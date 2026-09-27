@@ -5,10 +5,12 @@ baseline](../TECHNOLOGY_AND_GOVERNANCE.md), and this repository's `README.md`
 before material work. For API or Snowflake boundary changes, also read
 [ADR 0002](../docs/adr/0002-public-api-and-snowflake-access.md).
 
-- This repository owns typed shared contracts, deterministic scoring,
-  provenance/configuration models, Snowflake connection construction, and
-  redacted logging. Do not add FastAPI routes, browser concerns, pipeline
-  orchestration, or duplicate consumer-owned API models here.
+- The portable `domain` namespace owns typed contracts, strict identifiers,
+  provenance and deterministic scoring. Legacy Snowflake connection helpers
+  are isolated under `infrastructure` with deprecated shims and an explicit
+  extra; observability is also optional. Do not add FastAPI routes, MCP
+  transport, browser concerns, pipeline orchestration, or duplicate
+  consumer-owned API models here.
 - Treat exported models and behavior as versioned dependencies of the API and
   data repositories. Preserve backward compatibility by default; coordinate a
   release/version update and downstream compatibility tests before a breaking
@@ -19,7 +21,7 @@ before material work. For API or Snowflake boundary changes, also read
 Run the CI-equivalent checks before handoff:
 
 ```powershell
-uv sync --extra dev --locked
+uv sync --extra dev --extra legacy --locked
 uv run ruff check .
 uv run mypy
 uv run pytest -q

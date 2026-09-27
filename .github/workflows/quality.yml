@@ -16,11 +16,16 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --extra dev --locked
+      - run: uv sync --extra dev --extra legacy --locked
       - run: uv run ruff check .
       - run: uv run mypy
       - run: uv run pytest -q
       - run: uv build
+      - name: Verify portable base install
+        run: |
+          uv venv .portable-venv
+          uv pip install --python .portable-venv/bin/python .
+          .portable-venv/bin/python -c "import lyme_gap_atlas_shared.domain; import importlib.util; assert all(importlib.util.find_spec(name) is None for name in ('snowflake', 'pydantic_settings', 'opentelemetry', 'neo4j'))"
       - name: Scan Git history for secrets
         run: >-
           docker run --rm -v "$PWD:/repo"

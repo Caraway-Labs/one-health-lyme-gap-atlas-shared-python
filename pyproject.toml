@@ -4,22 +4,19 @@ build-backend = "hatchling.build"
 
 [project]
 name = "one-health-lyme-gap-atlas-shared"
-version = "0.1.5"
-description = "Shared contracts and infrastructure for the One Health Lyme Gap Atlas"
+version = "1.0.0"
+description = "Portable Atlas domain contracts and deterministic logic"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
-  "cryptography>=44,<46",
-  "opentelemetry-api>=1.30,<2",
-  "opentelemetry-sdk>=1.30,<2",
-  "opentelemetry-exporter-otlp-proto-http>=1.30,<2",
   "pydantic>=2.10,<3",
-  "pydantic-settings>=2.7,<3",
-  "snowflake-connector-python>=3.14,<5",
 ]
 
 [project.optional-dependencies]
 dev = ["mypy>=1.14,<2", "pytest>=8.3,<9", "ruff>=0.9,<1"]
+snowflake = ["cryptography>=44,<46", "pydantic-settings>=2.7,<3", "snowflake-connector-python>=3.14,<5"]
+observability = ["opentelemetry-api>=1.30,<2", "opentelemetry-sdk>=1.30,<2", "opentelemetry-exporter-otlp-proto-http>=1.30,<2"]
+legacy = ["cryptography>=44,<46", "pydantic-settings>=2.7,<3", "snowflake-connector-python>=3.14,<5", "opentelemetry-api>=1.30,<2", "opentelemetry-sdk>=1.30,<2", "opentelemetry-exporter-otlp-proto-http>=1.30,<2"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/lyme_gap_atlas_shared"]
