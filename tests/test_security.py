@@ -2,9 +2,18 @@ from contextlib import suppress
 
 import pytest
 
+from lyme_gap_atlas_shared.infrastructure.settings import SnowflakeSettings as InfraSettings
+from lyme_gap_atlas_shared.infrastructure.snowflake import (
+    connection_parameters as infra_connection_parameters,
+)
 from lyme_gap_atlas_shared.observability import parse_otlp_headers, redact
 from lyme_gap_atlas_shared.settings import SnowflakeSettings
 from lyme_gap_atlas_shared.snowflake import connection_parameters
+
+
+def test_legacy_snowflake_imports_are_identical_to_isolated_implementation() -> None:
+    assert SnowflakeSettings is InfraSettings
+    assert connection_parameters is infra_connection_parameters
 
 
 def test_redact_masks_nested_secrets() -> None:

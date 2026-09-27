@@ -3,6 +3,7 @@
 import ast
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 PACKAGE = Path(__file__).resolve().parents[1] / "src" / "lyme_gap_atlas_shared"
@@ -43,3 +44,13 @@ assert not any(name.startswith(('snowflake', 'neo4j', 'cryptography',
     for name in sys.modules)
 """
     subprocess.run([sys.executable, "-c", code], check=True)
+
+
+def test_base_dependency_set_does_not_grant_persistence_or_telemetry() -> None:
+    project = tomllib.loads((PACKAGE.parents[1] / "pyproject.toml").read_text())
+    dependencies = project["project"]["dependencies"]
+    assert dependencies == ["pydantic>=2.10,<3"]
+    extras = project["project"]["optional-dependencies"]
+    assert any("snowflake-connector-python" in item for item in extras["snowflake"])
+    assert any("pydantic-settings" in item for item in extras["snowflake"])
+    assert any("opentelemetry-sdk" in item for item in extras["observability"])
