@@ -4,21 +4,24 @@ Typed shared contracts for the One Health Lyme Gap Atlas API and data loader.
 
 Today this package owns deterministic Alpha scoring, provenance and Snowflake
 connection construction, as well as redacted logging and optional OTLP tracing.
-The proposed [portable domain boundary](docs/adr/0001-portable-domain-boundary.md)
-will let the REST API and MCP consume shared contracts as peer adapters without
+The [portable domain boundary](docs/adr/0001-portable-domain-boundary.md)
+lets the REST API and future MCP consumers use shared contracts as peer adapters without
 pulling persistence into the portable surface. The runtime dependency set is
-unchanged in this story.
+split into explicit extras: the base distribution now requires only Pydantic.
 
 The new `lyme_gap_atlas_shared.domain` namespace re-exports the existing
 portable models and scoring functions, plus strict county FIPS validation.
 Its public exports are listed in `domain.__all__`. Existing root imports still
-work. This story does not change the package dependency set; infrastructure
-isolation is tracked separately.
+work. Snowflake settings and connection helpers are isolated under
+`infrastructure` and require the `snowflake` extra. Their old import paths are
+deprecated compatibility shims. Logging and tracing require `observability`;
+the temporary `legacy` extra installs both sets for API/data migration.
 
-See the [current export and consumer inventory](docs/shared-surface.md).
+See the [current export and consumer inventory](docs/shared-surface.md) and
+[infrastructure migration guide](docs/infrastructure-migration.md).
 
 ```powershell
-uv sync --extra dev --locked
+uv sync --extra dev --extra legacy --locked
 uv run ruff check .
 uv run mypy
 uv run pytest -q

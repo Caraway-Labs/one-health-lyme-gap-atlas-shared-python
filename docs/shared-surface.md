@@ -3,16 +3,17 @@
 This is an inventory of the current package and its ownership. Story #23 adds
 `lyme_gap_atlas_shared.domain` as a portable import surface. Existing root
 imports remain available and retain object identity. Runtime integration
-dependencies are still part of the base distribution until Story #24/#25.
+dependencies are opt-in extras from Story #24 onward. The source version is
+not changed until Story #25; consumers stay on their pinned tags meanwhile.
 
 | Existing export | Classification | Ownership and migration |
 | --- | --- | --- |
 | Root `CountyInputs`, `Score`, `ScoreSettings`, `Provenance`; `models` classes | Portable contract/model | Also exported by `domain`; retain root imports for API |
 | Root `score_county`, `priority_label`, `score_color`; `scoring` functions | Pure deterministic domain logic | Also exported by `domain`; retain root imports for API |
 | `domain.normalize_county_fips`; `CountyInputs.fips` pattern | Validation/normalization | Strict five ASCII digits in helper; no padding or geographic inference |
-| `observability.redact`, `JsonFormatter`, `configure_logging`, `parse_otlp_headers`, `configure_tracing`, `flush_tracing`, `shutdown_tracing` | Observability/runtime configuration | API/data own runtime setup; optional dependency isolation is later work |
-| `settings.SnowflakeSettings` | Infrastructure-specific configuration | API/data must eventually own settings; later isolation must preserve consumers |
-| `snowflake.connection_parameters`, `snowflake.connect` | Infrastructure-specific connection | API/data must eventually own construction; later isolation must preserve consumers |
+| `observability.redact`, `JsonFormatter`, `configure_logging`, `parse_otlp_headers`, `configure_tracing`, `flush_tracing`, `shutdown_tracing` | Observability/runtime configuration | Explicit `observability` extra; API/data own runtime setup |
+| `settings.SnowflakeSettings` | Infrastructure-specific configuration | Deprecated shim to `infrastructure.settings`; API/data must eventually own settings |
+| `snowflake.connection_parameters`, `snowflake.connect` | Infrastructure-specific connection | Deprecated shims to `infrastructure.snowflake`; API/data must eventually own construction |
 
 No current shared export is a consumer-specific route or DTO. `Score` and
 `ScoreSettings` are already reused by the API. Its public `CountyDetail`,
@@ -32,8 +33,7 @@ Current consumers: API pins `v0.1.7` and imports root models/scoring,
 Data pins `v0.1.6` and imports settings/connection helpers across ingestion,
 migrations, verification and CLI modules, plus observability in its CLI.
 Neither repository is edited by this epic. Their existing tags keep the prior
-dependency set. If later work makes infrastructure dependencies optional,
-their next upgrade must select extras explicitly and run their own quality
+dependency set. Their next upgrade must select extras explicitly and run their own quality
 gates; package-local fixtures will not substitute for consumer CI.
 
 ### Classification rule

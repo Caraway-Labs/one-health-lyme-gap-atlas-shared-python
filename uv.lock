@@ -387,13 +387,7 @@ name = "one-health-lyme-gap-atlas-shared"
 version = "0.1.5"
 source = { editable = "." }
 dependencies = [
-    { name = "cryptography" },
-    { name = "opentelemetry-api" },
-    { name = "opentelemetry-exporter-otlp-proto-http" },
-    { name = "opentelemetry-sdk" },
     { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "snowflake-connector-python" },
 ]
 
 [package.optional-dependencies]
@@ -402,21 +396,45 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
+legacy = [
+    { name = "cryptography" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-exporter-otlp-proto-http" },
+    { name = "opentelemetry-sdk" },
+    { name = "pydantic-settings" },
+    { name = "snowflake-connector-python" },
+]
+observability = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-exporter-otlp-proto-http" },
+    { name = "opentelemetry-sdk" },
+]
+snowflake = [
+    { name = "cryptography" },
+    { name = "pydantic-settings" },
+    { name = "snowflake-connector-python" },
+]
 
 [package.metadata]
 requires-dist = [
-    { name = "cryptography", specifier = ">=44,<46" },
+    { name = "cryptography", marker = "extra == 'legacy'", specifier = ">=44,<46" },
+    { name = "cryptography", marker = "extra == 'snowflake'", specifier = ">=44,<46" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.14,<2" },
-    { name = "opentelemetry-api", specifier = ">=1.30,<2" },
-    { name = "opentelemetry-exporter-otlp-proto-http", specifier = ">=1.30,<2" },
-    { name = "opentelemetry-sdk", specifier = ">=1.30,<2" },
+    { name = "opentelemetry-api", marker = "extra == 'legacy'", specifier = ">=1.30,<2" },
+    { name = "opentelemetry-api", marker = "extra == 'observability'", specifier = ">=1.30,<2" },
+    { name = "opentelemetry-exporter-otlp-proto-http", marker = "extra == 'legacy'", specifier = ">=1.30,<2" },
+    { name = "opentelemetry-exporter-otlp-proto-http", marker = "extra == 'observability'", specifier = ">=1.30,<2" },
+    { name = "opentelemetry-sdk", marker = "extra == 'legacy'", specifier = ">=1.30,<2" },
+    { name = "opentelemetry-sdk", marker = "extra == 'observability'", specifier = ">=1.30,<2" },
     { name = "pydantic", specifier = ">=2.10,<3" },
-    { name = "pydantic-settings", specifier = ">=2.7,<3" },
+    { name = "pydantic-settings", marker = "extra == 'legacy'", specifier = ">=2.7,<3" },
+    { name = "pydantic-settings", marker = "extra == 'snowflake'", specifier = ">=2.7,<3" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3,<9" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9,<1" },
-    { name = "snowflake-connector-python", specifier = ">=3.14,<5" },
+    { name = "snowflake-connector-python", marker = "extra == 'legacy'", specifier = ">=3.14,<5" },
+    { name = "snowflake-connector-python", marker = "extra == 'snowflake'", specifier = ">=3.14,<5" },
 ]
-provides-extras = ["dev"]
+provides-extras = ["dev", "snowflake", "observability", "legacy"]
 
 [[package]]
 name = "opentelemetry-api"
