@@ -5,10 +5,13 @@ baseline](../TECHNOLOGY_AND_GOVERNANCE.md), and this repository's `README.md`
 before material work. For API or Snowflake boundary changes, also read
 [ADR 0002](../docs/adr/0002-public-api-and-snowflake-access.md).
 
-- This repository owns typed shared contracts, deterministic scoring,
-  provenance/configuration models, Snowflake connection construction, and
-  redacted logging. Do not add FastAPI routes, browser concerns, pipeline
-  orchestration, or duplicate consumer-owned API models here.
+- This repository currently owns typed contracts, deterministic scoring,
+  provenance, Snowflake connection construction, and redacted logging. Follow
+  the [proposed domain boundary](docs/adr/0001-portable-domain-boundary.md)
+  when classifying new work: portable shared code may know Atlas semantics,
+  but not where the data lives. Snowflake helpers are infrastructure-specific
+  migration candidates. Do not add FastAPI routes, MCP transport, browser
+  concerns, pipeline orchestration, or duplicate consumer-owned API models.
 - Treat exported models and behavior as versioned dependencies of the API and
   data repositories. Preserve backward compatibility by default; coordinate a
   release/version update and downstream compatibility tests before a breaking
