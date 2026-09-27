@@ -1,14 +1,15 @@
 # Shared surface and consumer inventory
 
-This is an inventory of the current package and its proposed ownership. The
-`lyme_gap_atlas_shared.domain` namespace does not exist yet; Story #23 owns it.
-All listed exports below still use their original import paths.
+This is an inventory of the current package and its ownership. Story #23 adds
+`lyme_gap_atlas_shared.domain` as a portable import surface. Existing root
+imports remain available and retain object identity. Runtime integration
+dependencies are still part of the base distribution until Story #24/#25.
 
 | Existing export | Classification | Ownership and migration |
 | --- | --- | --- |
-| Root `CountyInputs`, `Score`, `ScoreSettings`, `Provenance`; `models` classes | Portable contract/model | Candidate for `domain`; retain root imports for API |
-| Root `score_county`, `priority_label`, `score_color`; `scoring` functions | Pure deterministic domain logic | Candidate for `domain`; retain root imports for API |
-| `CountyInputs.fips` five-digit pattern | Validation/normalization | Candidate strict FIPS helper; do not pad or infer geography |
+| Root `CountyInputs`, `Score`, `ScoreSettings`, `Provenance`; `models` classes | Portable contract/model | Also exported by `domain`; retain root imports for API |
+| Root `score_county`, `priority_label`, `score_color`; `scoring` functions | Pure deterministic domain logic | Also exported by `domain`; retain root imports for API |
+| `domain.normalize_county_fips`; `CountyInputs.fips` pattern | Validation/normalization | Strict five ASCII digits in helper; no padding or geographic inference |
 | `observability.redact`, `JsonFormatter`, `configure_logging`, `parse_otlp_headers`, `configure_tracing`, `flush_tracing`, `shutdown_tracing` | Observability/runtime configuration | API/data own runtime setup; optional dependency isolation is later work |
 | `settings.SnowflakeSettings` | Infrastructure-specific configuration | API/data must eventually own settings; later isolation must preserve consumers |
 | `snowflake.connection_parameters`, `snowflake.connect` | Infrastructure-specific connection | API/data must eventually own construction; later isolation must preserve consumers |
@@ -38,7 +39,7 @@ gates; package-local fixtures will not substitute for consumer CI.
 ### Classification rule
 
 Put stable Atlas contracts, identifiers, provenance/uncertainty semantics,
-validation and pure calculations in the proposed `domain` surface. Keep SQL,
+validation and pure calculations in the `domain` surface. Keep SQL,
 connectors, credentials, Neo4j, routes, MCP tool registration, caching,
 deployment and orchestration in their owning services. Do not move API response
 models here solely because they resemble domain objects. Cross-consumer
