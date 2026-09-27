@@ -18,7 +18,9 @@ deprecated compatibility shims. Logging and tracing require `observability`;
 the temporary `legacy` extra installs both sets for API/data migration.
 
 See the [current export and consumer inventory](docs/shared-surface.md) and
-[infrastructure migration guide](docs/infrastructure-migration.md).
+[infrastructure migration guide](docs/infrastructure-migration.md). The
+[versioning policy](docs/versioning.md) explains why source version 1.0.0 is
+a major dependency-contract change and how consumers upgrade.
 
 ```powershell
 uv sync --extra dev --extra legacy --locked

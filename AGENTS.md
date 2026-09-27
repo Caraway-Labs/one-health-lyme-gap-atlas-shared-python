@@ -18,7 +18,8 @@ before material work. For API or Snowflake boundary changes, also read
 - Treat exported models and behavior as versioned dependencies of the API and
   data repositories. Preserve backward compatibility by default; coordinate a
   release/version update and downstream compatibility tests before a breaking
-  change.
+  change. Follow [the versioning policy](docs/versioning.md); a source version
+  update does not itself authorize a tag or published release.
 - Keep credentials as secret values and redact them from errors, logs, fixtures,
   and source control. Do not weaken least-privilege connection safeguards.
 
