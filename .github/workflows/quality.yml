@@ -21,6 +21,11 @@ jobs:
       - run: uv run mypy
       - run: uv run pytest -q
       - run: uv build
+      - name: Verify portable base wheel
+        run: |
+          uv venv .portable-venv
+          uv pip install --python .portable-venv/bin/python dist/*.whl
+          .portable-venv/bin/python scripts/verify_portable_install.py
       - name: Scan Git history for secrets
         run: >-
           docker run --rm -v "$PWD:/repo"

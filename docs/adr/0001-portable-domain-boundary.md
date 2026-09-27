@@ -1,6 +1,6 @@
 # 0001: Portable Atlas Domain Boundary
 
-Status: Proposed
+Status: Accepted
 Date: 2026-09-26
 Decision owner: Atlas shared Python maintainers and product engineering leads
 
@@ -8,18 +8,20 @@ Decision owner: Atlas shared Python maintainers and product engineering leads
 
 The REST API and data loader consume shared contracts and Snowflake connection
 helpers. MCP is a peer adapter that needs reusable domain semantics without
-acquiring persistence capabilities. The current base dependency set installs
-the Snowflake connector and OTLP runtime for every consumer.
+acquiring persistence capabilities. Before Stories #23 and #24, the base
+dependency set installed the Snowflake connector and OTLP runtime for every
+consumer. Owner merge of PR #27 approved this decision; Stories #23 and #24
+implemented its namespace and dependency boundary.
 
 ## Decision
 
-REST and MCP are peer interface adapters. A future
-`lyme_gap_atlas_shared.domain` surface should expose contracts, validation and
+REST and MCP are peer interface adapters. The
+`lyme_gap_atlas_shared.domain` surface exposes contracts, validation and
 pure deterministic calculations. Shared Python may know the Atlas domain, but
-its portable surface must not know where Atlas data lives. The target base
-runtime dependency is Pydantic only. A later story will isolate infrastructure
-modules behind explicit extras while preserving old `settings` and `snowflake`
-import paths as migration shims.
+its portable surface must not know where Atlas data lives. The base runtime
+dependency is Pydantic only. Infrastructure modules are isolated behind
+explicit extras while old `settings` and `snowflake` import paths remain
+deprecated migration shims.
 
 Dependency direction is adapter -> domain. An adapter owns its transport,
 credentials, persistence, cache, deployment configuration and runtime
@@ -36,9 +38,10 @@ contract; only independently useful, agreed domain concepts move here.
 
 ## Consequences
 
-This ADR alone changes no runtime behavior. Subsequent stories will add the
-portable namespace, isolate infrastructure dependencies, and add import and
-serialization gates. Existing API/data pins must remain functional. Any future
+The ADR itself changed no runtime behavior in Story #22. Subsequent stories
+added the portable namespace and isolated infrastructure dependencies. Import,
+serialization, and base-install gates enforce the boundary. Existing API/data
+pins remain functional. Any future
 upgrade that requires explicit extras must be coordinated with consumer tests.
 MCP adoption will occur in its own repository, not in this story.
 
@@ -54,22 +57,21 @@ consumers a bounded migration path.
 
 - The current exports and consumers are inventoried and classified.
 - Allowed dependency direction and excluded runtime concerns are documented.
-- No runtime modules, dependencies or behavior change in this story.
-- Later stories verify portable imports, legacy safeguards and fixtures.
+- Story #22 changed no runtime modules, dependencies or behavior.
+- Stories #23–#25 verify portable imports, legacy safeguards and fixtures.
 
 ## Rollout, observability, and rollback
 
-After owner review and later implementation stories, publish a major version
-for the breaking base dependency contract: consumers upgrading from 0.x must
-explicitly request infrastructure extras. No tag or release is created by this
-ADR. API/data retain earlier pins until their own tested upgrades; MCP adopts
+The source version advances to 1.0.0 for the breaking base dependency
+contract: consumers upgrading from 0.x must explicitly request infrastructure
+extras. Tagging or publishing requires a separate authorized release task.
+API/data retain earlier pins until their own tested upgrades; MCP adopts
 the portable base in its own epic. Keep old Snowflake paths until coordinated
 migration and a later removal decision.
 
 ## Links to affected contracts and tests
 
 - `docs/shared-surface.md`
-- Later Story #23 domain and architecture tests
-- Later Story #24 infrastructure isolation tests
-- Later Story #25 versioning and compatibility policy
+- `tests/test_domain_contract.py` and `tests/test_architecture.py`
+- `docs/infrastructure-migration.md` and `docs/versioning.md`
 - Workspace ADR 0002: public API and Snowflake access
