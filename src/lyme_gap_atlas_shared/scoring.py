@@ -1,17 +1,20 @@
-"""Authoritative deterministic Alpha scoring implementation."""
+"""Authoritative Surveillance Gap Score v1.1 with explicit historical v1.0 replay."""
 
-from .models import CountyInputs, Score, ScoreSettings
+from .models import CountyInputs, LegacyScoreSettings, Score, ScoreSettings
 
 
 def _clamp(value: float, minimum: float = 0, maximum: float = 100) -> float:
     return min(maximum, max(minimum, value))
 
 
-def score_county(county: CountyInputs, settings: ScoreSettings) -> Score:
+def score_county(county: CountyInputs, settings: ScoreSettings | LegacyScoreSettings) -> Score:
     if county.human_status == "published_count_floor" and county.incidence_floor_2023 is not None:
-        human = 100 * _clamp(
-            1 - county.incidence_floor_2023 / settings.low_incidence_breakpoint, 0, 1
-        )
+        if isinstance(settings, LegacyScoreSettings):
+            human = 100 * _clamp(
+                1 - county.incidence_floor_2023 / settings.low_incidence_breakpoint, 0, 1
+            )
+        else:
+            human = 100.0 / (1.0 + county.incidence_floor_2023 / settings.smooth_k)
     else:
         human = float(settings.missing_human_weakness)
 

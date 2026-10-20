@@ -43,3 +43,7 @@ approved shared-package boundary.
 Package-local API and prospective MCP fixtures guard shared serialization and
 imports. Targeted source-overridden consumer tests are bounded evidence only;
 neither proves an actual API/data dependency upgrade or live MCP integration.
+
+## Approved score release (#32)
+
+Package source 2.0.0 implements the approved scoring semantics change to Surveillance Gap Score v1.1. See ADR 0002 and the v1.1 method contract. The controlled legacy settings type supports historical replay; incompatible breakpoint arguments on the default settings are rejected. API upgrades by immutable commit pin, followed by a coordinated generated Web client release. No tag is required for that pin.

@@ -20,7 +20,7 @@ def test_api_legacy_and_domain_exports_share_identity() -> None:
     assert LegacyCountyInputs is CountyInputs
     assert ScoreSettings().model_dump() == {
         "ecological_share": 65,
-        "low_incidence_breakpoint": 10,
+        "smooth_k": 50,
         "missing_human_weakness": 75,
     }
 

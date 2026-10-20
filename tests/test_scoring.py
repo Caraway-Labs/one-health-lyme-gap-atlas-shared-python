@@ -21,7 +21,7 @@ def test_alpha_scoring_and_missing_human_semantics() -> None:
     assert priority_label(score.score) == "Priority 2 — Review"
 
 
-def test_published_incidence_uses_breakpoint() -> None:
+def test_published_incidence_uses_smooth_k50() -> None:
     county = CountyInputs(
         fips="06037",
         in_contiguous_tick_scope=True,
@@ -30,7 +30,7 @@ def test_published_incidence_uses_breakpoint() -> None:
         tick_status="No records",
         burgdorferi_status="No records",
     )
-    assert score_county(county, ScoreSettings()).human_weakness == 0
+    assert score_county(county, ScoreSettings()).human_weakness == 83.3
 
 
 def test_unknown_surveillance_state_remains_valid_for_scoring() -> None:
