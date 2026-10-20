@@ -2,7 +2,7 @@
 
 Typed shared contracts for the One Health Lyme Gap Atlas API and data loader.
 
-Today this package owns deterministic Alpha scoring, provenance and Snowflake
+Today this package owns authoritative Surveillance Gap Score v1.1 (Smooth k=50) scoring, provenance and Snowflake
 connection construction, as well as redacted logging and optional OTLP tracing.
 The [portable domain boundary](docs/adr/0001-portable-domain-boundary.md)
 lets the REST API and future MCP consumers use shared contracts as peer adapters without
@@ -29,3 +29,5 @@ uv run mypy
 uv run pytest -q
 uv build
 ```
+
+The [v1.1 methodology and rollback contract](docs/surveillance-gap-score-v1.1.md) documents the approved formula, missing-human legacy assumption, and package 2.0.0 compatibility change.

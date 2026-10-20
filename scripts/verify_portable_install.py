@@ -13,7 +13,7 @@ from lyme_gap_atlas_shared.domain import (
     score_county,
 )
 
-assert importlib.metadata.version("one-health-lyme-gap-atlas-shared") == "1.0.0"
+assert importlib.metadata.version("one-health-lyme-gap-atlas-shared") == "2.0.0"
 assert normalize_county_fips("08001") == "08001"
 county = CountyInputs(
     fips="08001",
