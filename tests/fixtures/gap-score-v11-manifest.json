@@ -1,0 +1,7 @@
+{
+  "release_id": "governed-2026-10-15-january-climate-prod",
+  "research_csv_sha256": "4f519bc290f0b0af22482c6a4f7fcdcb9e7b3a3e8b44a617abee77e7cf0d65ae",
+  "fixture_sha256": "2c7263c6ccca08ae0f2181b3a39ccdd7ec4a3c67f24eab56872e258aed0c2346",
+  "rows": 3144,
+  "source": "Shared Python #31 pinned research, k50 only"
+}
